@@ -1,12 +1,11 @@
 import React from "react";
 
-export default function Card({ title, children }) {
+export default function Card({ title, value, children }) {
   return (
-    <div className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-300 p-6 border border-gray-100">
-      {title && (
-        <h3 className="text-xl font-semibold text-gray-800 mb-4">{title}</h3>
-      )}
-      <div className="text-gray-700">{children}</div>
+    <div className="glass-card p-6 rounded-2xl shadow-card-lg border border-transparent hover:border-primary-300 transition-all">
+      {title && <div className="text-sm text-neutral-500 mb-2">{title}</div>}
+      {value && <div className="text-2xl font-semibold text-neutral-900 mb-3">{value}</div>}
+      <div className="text-neutral-700">{children}</div>
     </div>
   );
 }

@@ -1,9 +1,9 @@
-// src/pages/Login.jsx
-import React, { useState, useContext } from "react";
+import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
 import { AuthContext } from "../context/AuthContext";
-import { FaGoogle } from "react-icons/fa";
+import AuthCard from "../components/AuthCard";
+import AnimatedInput from "../components/ui/AnimatedInput";
+import GoogleButton from "../components/ui/GoogleButton";
 
 export default function Login() {
   const { login } = useContext(AuthContext);
@@ -12,15 +12,17 @@ export default function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (event) =>
+    setForm((prev) => ({ ...prev, [event.target.name]: event.target.value }));
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = (event) => {
+    event.preventDefault();
     if (!form.email || !form.password) {
-      setError("Por favor complete todos los campos");
+      setError("Por favor completa todos los campos");
       return;
     }
-    login(form.email, form.password); // lógica del AuthContext
+
+    login(form.email, form.password);
     navigate("/");
   };
 
@@ -29,80 +31,54 @@ export default function Login() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 justify-center items-center px-4">
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8"
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-slate-950/90 px-4 py-12">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(59,130,246,0.25),_transparent_55%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_bottom,_rgba(16,185,129,0.18),_transparent_60%)]" />
+
+      <AuthCard
+        title="Bienvenido a Speed CRM"
+        subtitle="Inicia sesión para acceder a tu panel personalizado"
       >
-        <h2 className="text-3xl font-bold text-center text-blue-700 mb-6">
-          Bienvenido al CRM
-        </h2>
-        <p className="text-center text-gray-500 mb-8">
-          Inicia sesión para continuar
-        </p>
-
         <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <label className="block text-gray-600 mb-2">Correo electrónico</label>
-            <input
-              type="email"
-              name="email"
-              value={form.email}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-              placeholder="ejemplo@empresa.com"
-            />
-          </div>
+          <AnimatedInput
+            label="Correo electrónico"
+            name="email"
+            type="email"
+            value={form.email}
+            onChange={handleChange}
+            placeholder="ejemplo@empresa.com"
+            autoComplete="email"
+          />
 
-          <div>
-            <label className="block text-gray-600 mb-2">Contraseña</label>
-            <input
-              type="password"
-              name="password"
-              value={form.password}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-              placeholder="••••••••"
-            />
-          </div>
+          <AnimatedInput
+            label="Contraseña"
+            name="password"
+            type="password"
+            value={form.password}
+            onChange={handleChange}
+            placeholder="••••••••"
+            autoComplete="current-password"
+          />
 
-          {error && (
-            <p className="text-center text-red-500 text-sm">{error}</p>
-          )}
+          {error && <p className="text-center text-sm text-red-500">{error}</p>}
 
-          <motion.button
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.98 }}
+          <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-xl font-semibold hover:bg-blue-700 transition-all"
+            className="w-full rounded-xl bg-gradient-to-r from-indigo-600 via-blue-600 to-sky-500 px-4 py-3 text-sm font-semibold text-white shadow-[0_18px_40px_-15px_rgba(37,99,235,0.65)] transition hover:shadow-[0_18px_50px_-12px_rgba(37,99,235,0.55)]"
           >
             Iniciar sesión
-          </motion.button>
+          </button>
 
-          <motion.button
-            type="button"
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={handleGoogleLogin}
-            className="w-full flex items-center justify-center gap-2 border border-gray-300 py-2 rounded-xl hover:bg-gray-100 transition-all"
-          >
-            <FaGoogle className="text-red-500" />
-            <span>Iniciar sesión con Google</span>
-          </motion.button>
+          <GoogleButton text="Entrar con Google" onClick={handleGoogleLogin} />
         </form>
 
-        <p className="text-center text-gray-500 mt-6">
+        <p className="mt-8 text-center text-sm text-slate-500">
           ¿No tienes cuenta?{" "}
-          <Link
-            to="/register"
-            className="text-blue-600 font-semibold hover:underline"
-          >
-            Regístrate
+          <Link to="/register" className="font-semibold text-indigo-600 hover:underline">
+            Regístrate aquí
           </Link>
         </p>
-      </motion.div>
+      </AuthCard>
     </div>
   );
 }

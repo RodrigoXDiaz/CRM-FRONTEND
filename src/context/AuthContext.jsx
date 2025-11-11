@@ -8,14 +8,14 @@ export const AuthProvider = ({ children }) => {
 
   // Leer sesión guardada al cargar
   useEffect(() => {
-    const saved = localStorage.getItem("crmUser");
+    const saved = localStorage.getItem("speedCrmUser");
     if (saved) setUser(JSON.parse(saved));
   }, []);
 
   const login = (email, password) => {
     // simulamos autenticación
     const fakeUser = { email };
-    localStorage.setItem("crmUser", JSON.stringify(fakeUser));
+    localStorage.setItem("speedCrmUser", JSON.stringify(fakeUser));
     setUser(fakeUser);
     return true;
   };
@@ -23,13 +23,13 @@ export const AuthProvider = ({ children }) => {
   const register = (name, email, password) => {
     // simulamos registro (guardar datos)
     const newUser = { name, email };
-    localStorage.setItem("crmUser", JSON.stringify(newUser));
+    localStorage.setItem("speedCrmUser", JSON.stringify(newUser));
     setUser(newUser);
     return true;
   };
 
   const logout = () => {
-    localStorage.removeItem("crmUser");
+    localStorage.removeItem("speedCrmUser");
     setUser(null);
   };
 

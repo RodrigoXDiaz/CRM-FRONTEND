@@ -1,108 +1,246 @@
-import React, { useState } from 'react';
-import { Dialog, Transition } from '@headlessui/react';
-import { ChatBubbleLeftEllipsisIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import { Fragment } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { MessageCircle, X, Send, Sparkles } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
-export default function FloatingChat(){
-  const [open, setOpen] = useState(false);
+const introMessages = [
+  {
+    id: "intro-1",
+    sender: "assistant",
+  text: "Hola, soy Aurora, tu asistente de Speed CRM. ¿Cómo puedo ayudarte hoy?",
+  },
+  {
+    id: "intro-2",
+    sender: "assistant",
+    text: "Puedo guiarte para iniciar sesión, registrarte o explicarte el panel principal.",
+  },
+];
+
+const quickReplies = [
+  {
+    id: "login",
+    label: "Necesito iniciar sesión",
+    userText: "Necesito ayuda para iniciar sesión",
+    assistantText:
+      "Perfecto. Para iniciar sesión usa tu correo corporativo y contraseña. Si quieres, te llevo ahora mismo al formulario.",
+    navigateTo: "/login",
+  },
+  {
+    id: "register",
+    label: "Crear una cuenta",
+    userText: "Quiero crear una cuenta nueva",
+    assistantText:
+      "Genial. Solo necesitarás tu nombre, correo y una contraseña segura. Te llevo al registro cuando estés listo.",
+    navigateTo: "/register",
+  },
+  {
+    id: "overview",
+    label: "Conocer el panel",
+    userText: "Muéstrame el panel principal",
+    assistantText:
+      "El dashboard resume actividad, metas y novedades. Te aseguro que te encantará. ¿Vamos al panel?",
+    navigateTo: "/",
+  },
+];
+
+const getAssistantReply = (content) => {
+  const normalized = content.toLowerCase();
+
+  if (normalized.includes("registr")) {
+    return {
+      text: "Para registrarte ingresa tu nombre completo, correo y una contraseña de al menos 8 caracteres. Puedes continuar desde el botón de registro.",
+      navigateTo: "/register",
+    };
+  }
+
+  if (normalized.includes("iniciar") || normalized.includes("login")) {
+    return {
+      text: "Ve a tu panel de inicio de sesión, escribe tu correo y contraseña. Si olvidaste tus datos, contacta a soporte.",
+      navigateTo: "/login",
+    };
+  }
+
+  if (normalized.includes("panel") || normalized.includes("dashboard")) {
+    return {
+      text: "El panel principal muestra los indicadores clave, accesos rápidos y actividades recientes. También puedes llegar desde la barra lateral.",
+      navigateTo: "/",
+    };
+  }
+
+  return {
+    text: "Soy una demo conversacional, pero con gusto te doy orientación básica. Pregunta por iniciar sesión, registrarte o conocer el dashboard.",
+  };
+};
+
+const FloatingChat = () => {
   const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+  const [messages, setMessages] = useState(() => introMessages);
+  const [pendingMessage, setPendingMessage] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
+  const scrollRef = useRef(null);
 
-  const quickActions = [
-    { label: 'Crear Usuario', to: '/users' },
-    { label: 'Ver Reportes', to: '/reports' },
-    { label: 'Ir al Dashboard', to: '/' },
-    { label: 'Soporte técnico', to: '/settings' }
-  ];
+  useEffect(() => {
+    if (open) {
+      // Ensure intro messages exist when chat opens again
+      setMessages((prev) => (prev.length ? prev : introMessages));
+    }
+  }, [open]);
+
+  useEffect(() => {
+    if (open && scrollRef.current) {
+      scrollRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages, open]);
+
+  const pushMessage = (sender, text) => {
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: `${sender}-${Date.now()}-${Math.random().toString(16).slice(2, 6)}`,
+        sender,
+        text,
+      },
+    ]);
+  };
+
+  const respondWith = (reply, { navigateAfter } = {}) => {
+    setIsTyping(true);
+    setTimeout(() => {
+      pushMessage("assistant", reply.text);
+      setIsTyping(false);
+
+      if (navigateAfter && reply.navigateTo) {
+        setTimeout(() => {
+          navigate(reply.navigateTo);
+          setOpen(false);
+        }, 650);
+      }
+    }, 500);
+  };
+
+  const handleSend = (event) => {
+    event.preventDefault();
+    const content = pendingMessage.trim();
+    if (!content) return;
+
+    pushMessage("user", content);
+    setPendingMessage("");
+    respondWith(getAssistantReply(content));
+  };
+
+  const handleQuickReply = (reply) => {
+    pushMessage("user", reply.userText);
+    respondWith({ text: reply.assistantText, navigateTo: reply.navigateTo }, { navigateAfter: true });
+  };
 
   return (
     <>
-      <button
-        title="Soporte"
-        onClick={() => setOpen(true)}
-        className="floating-chat-btn fixed right-6 bottom-6 bg-corporate-900 text-white flex items-center justify-center z-50"
-        aria-label="Abrir chat de soporte"
+      <motion.button
+        type="button"
+        onClick={() => setOpen((prev) => !prev)}
+        whileTap={{ scale: 0.93 }}
+        className="fixed bottom-6 right-6 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 via-blue-500 to-sky-500 text-white shadow-[0_22px_45px_-18px_rgba(37,99,235,0.75)] transition hover:scale-105"
       >
-        <ChatBubbleLeftEllipsisIcon className="w-6 h-6" />
-      </button>
+        {open ? <X size={24} /> : <MessageCircle size={26} />}
+      </motion.button>
 
-      <Transition show={open} as={Fragment}>
-        <Dialog as="div" className="relative z-50" onClose={() => setOpen(false)}>
-          <Transition.Child
-            as={Fragment}
-            enter="transition-opacity duration-200"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="transition-opacity duration-150"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 40 }}
+            transition={{ duration: 0.28, ease: "easeOut" }}
+            className="fixed bottom-24 right-6 z-30 w-[22rem] overflow-hidden rounded-3xl border border-white/20 bg-slate-900/85 shadow-[0_35px_80px_-35px_rgba(15,23,42,0.85)] backdrop-blur-2xl"
           >
-            <div className="fixed inset-0 bg-black/30" aria-hidden />
-          </Transition.Child>
+            <div className="relative px-5 pb-4 pt-5">
+              <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-br from-indigo-500/40 via-sky-400/30 to-transparent blur-3xl" />
+              <div className="relative flex items-center justify-between">
+                <div>
+                  <p className="flex items-center gap-2 text-xs uppercase tracking-[0.35em] text-indigo-200/80">
+                    <Sparkles size={14} />
+                    Aurora
+                  </p>
+                  <h3 className="mt-1 text-lg font-semibold text-white">Asistente Speed CRM</h3>
+                  <p className="text-xs text-slate-300/90">Disponible para guiarte</p>
+                </div>
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/10 text-white">
+                  <MessageCircle size={20} />
+                </div>
+              </div>
+            </div>
 
-          <div className="fixed right-6 bottom-24 w-96">
-            <Transition.Child
-              as={Fragment}
-              enter="transform transition duration-200"
-              enterFrom="translate-y-6 opacity-0"
-              enterTo="translate-y-0 opacity-100"
-              leave="transform transition duration-150"
-              leaveFrom="translate-y-0 opacity-100"
-              leaveTo="translate-y-6 opacity-0"
-            >
-              <Dialog.Panel className="bg-white rounded-md shadow-lg overflow-hidden">
-                <div className="flex items-center justify-between px-4 py-3 border-b">
-                  <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-md bg-corporate-900 text-white flex items-center justify-center">SS</div>
-                    <div>
-                      <div className="font-medium">Soporte</div>
-                      <div className="text-xs text-neutral-500">¿En qué puedo ayudarte?</div>
-                    </div>
+            <div className="flex max-h-80 flex-col gap-3 overflow-y-auto px-5 pb-4" role="log">
+              {messages.map((message) => (
+                <div
+                  key={message.id}
+                  className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}
+                >
+                  <div
+                    className={`max-w-[85%] rounded-2xl px-4 py-2 text-sm leading-relaxed shadow-sm ${
+                      message.sender === "user"
+                        ? "rounded-br-sm bg-indigo-500 text-white"
+                        : "rounded-bl-sm bg-white/10 text-slate-100"
+                    }`}
+                  >
+                    {message.text}
                   </div>
-                  <button onClick={() => setOpen(false)} className="p-1 rounded-md hover:bg-gray-50">
-                    <XMarkIcon className="w-5 h-5" />
+                </div>
+              ))}
+
+              {isTyping && (
+                <div className="flex justify-start">
+                  <div className="flex items-center gap-2 rounded-2xl bg-white/10 px-4 py-2 text-xs text-slate-200">
+                    <span className="inline-flex gap-1">
+                      <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-slate-200" style={{ animationDelay: "0ms" }} />
+                      <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-slate-200" style={{ animationDelay: "120ms" }} />
+                      <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-slate-200" style={{ animationDelay: "240ms" }} />
+                    </span>
+                    escribiendo…
+                  </div>
+                </div>
+              )}
+
+              <span ref={scrollRef} />
+            </div>
+
+            <div className="space-y-3 border-t border-white/10 bg-slate-900/70 px-5 py-4">
+              <div className="flex flex-wrap gap-2">
+                {quickReplies.map((reply) => (
+                  <button
+                    key={reply.id}
+                    type="button"
+                    onClick={() => handleQuickReply(reply)}
+                    className="rounded-full border border-indigo-400/40 bg-indigo-500/10 px-4 py-1.5 text-xs font-medium text-indigo-100 transition hover:border-indigo-300 hover:bg-indigo-500/20"
+                  >
+                    {reply.label}
                   </button>
-                </div>
+                ))}
+              </div>
 
-                <div className="p-4 space-y-3 max-h-64 overflow-auto">
-                  <div className="text-sm text-neutral-600">Hola 👋 Soy el asistente visual. Escribe lo que deseas o usa las acciones rápidas.</div>
-
-                  {/* Simulated recent messages */}
-                  <div className="space-y-2">
-                    <div className="bg-gray-50 p-2 rounded-md text-sm text-neutral-700">Quiero crear un usuario nuevo</div>
-                    <div className="bg-corporate-900 text-white p-2 rounded-md text-sm self-end">Te puedo ayudar con eso. Usa el botón abajo.</div>
-                  </div>
-
-                  <div>
-                    <div className="text-xs text-neutral-500 mb-2">Acciones rápidas</div>
-                    <div className="flex flex-wrap gap-2">
-                      {quickActions.map((a) => (
-                        <button
-                          key={a.label}
-                          onClick={() => { setOpen(false); navigate(a.to); }}
-                          className="px-3 py-1.5 rounded-md border text-sm hover:bg-gray-50"
-                        >
-                          {a.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="p-3 border-t">
-                  <div className="flex gap-2">
-                    <input
-                      placeholder="Escribe tu mensaje..."
-                      className="flex-1 px-3 py-2 rounded-md border focus:outline-none"
-                    />
-                    <button className="px-3 py-2 rounded-md bg-corporate-900 text-white">Enviar</button>
-                  </div>
-                </div>
-              </Dialog.Panel>
-            </Transition.Child>
-          </div>
-        </Dialog>
-      </Transition>
+              <form onSubmit={handleSend} className="flex items-center gap-2 rounded-2xl border border-white/10 bg-white/10 px-3 py-2">
+                <input
+                  type="text"
+                  value={pendingMessage}
+                  onChange={(event) => setPendingMessage(event.target.value)}
+                  placeholder="Escribe tu mensaje"
+                  className="flex-1 bg-transparent text-sm text-white outline-none placeholder:text-slate-400"
+                />
+                <button
+                  type="submit"
+                  className="flex h-10 w-10 items-center justify-center rounded-2xl bg-indigo-500 text-white transition hover:bg-indigo-400"
+                  disabled={!pendingMessage.trim()}
+                >
+                  <Send size={18} />
+                </button>
+              </form>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
-}
+};
+
+export default FloatingChat;

@@ -1,27 +1,21 @@
-// src/pages/Register.jsx
-import React, { useState, useContext } from "react";
+import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
 import { AuthContext } from "../context/AuthContext";
-import { FaUserPlus } from "react-icons/fa";
+import AuthCard from "../components/AuthCard";
+import AnimatedInput from "../components/ui/AnimatedInput";
 
 export default function Register() {
   const { register } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    password: "",
-    confirm: "",
-  });
+  const [form, setForm] = useState({ name: "", email: "", password: "", confirm: "" });
   const [error, setError] = useState("");
 
-  const handleChange = (e) =>
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (event) =>
+    setForm((prev) => ({ ...prev, [event.target.name]: event.target.value }));
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = (event) => {
+    event.preventDefault();
     if (!form.name || !form.email || !form.password || !form.confirm) {
       setError("Todos los campos son obligatorios");
       return;
@@ -36,95 +30,71 @@ export default function Register() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 justify-center items-center px-4">
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8"
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-slate-950/90 px-4 py-12">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(37,99,235,0.22),_transparent_55%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_bottom,_rgba(14,165,233,0.2),_transparent_58%)]" />
+
+      <AuthCard
+        title="Crear cuenta"
+        subtitle="Diseña tu espacio de trabajo en menos de un minuto"
       >
-        <h2 className="text-3xl font-bold text-center text-blue-700 mb-6">
-          Crear cuenta
-        </h2>
-        <p className="text-center text-gray-500 mb-8">
-          Regístrate para acceder al CRM
-        </p>
-
         <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <label className="block text-gray-600 mb-2">Nombre completo</label>
-            <input
-              type="text"
-              name="name"
-              value={form.name}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-              placeholder="Tu nombre"
-            />
-          </div>
+          <AnimatedInput
+            label="Nombre completo"
+            name="name"
+            value={form.name}
+            onChange={handleChange}
+            placeholder="Tu nombre"
+            autoComplete="name"
+          />
 
-          <div>
-            <label className="block text-gray-600 mb-2">Correo electrónico</label>
-            <input
-              type="email"
-              name="email"
-              value={form.email}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-              placeholder="ejemplo@empresa.com"
-            />
-          </div>
+          <AnimatedInput
+            label="Correo corporativo"
+            name="email"
+            type="email"
+            value={form.email}
+            onChange={handleChange}
+            placeholder="usuario@empresa.com"
+            autoComplete="email"
+          />
 
-          <div>
-            <label className="block text-gray-600 mb-2">Contraseña</label>
-            <input
-              type="password"
-              name="password"
-              value={form.password}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-              placeholder="••••••••"
-            />
-          </div>
+          <AnimatedInput
+            label="Contraseña"
+            name="password"
+            type="password"
+            value={form.password}
+            onChange={handleChange}
+            placeholder="Mínimo 8 caracteres"
+            autoComplete="new-password"
+          />
 
-          <div>
-            <label className="block text-gray-600 mb-2">
-              Confirmar contraseña
-            </label>
-            <input
-              type="password"
-              name="confirm"
-              value={form.confirm}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-              placeholder="••••••••"
-            />
-          </div>
+          <AnimatedInput
+            label="Confirmar contraseña"
+            name="confirm"
+            type="password"
+            value={form.confirm}
+            onChange={handleChange}
+            placeholder="Repite tu contraseña"
+            autoComplete="new-password"
+          />
 
-          {error && (
-            <p className="text-center text-red-500 text-sm">{error}</p>
-          )}
+          {error && <p className="text-center text-sm text-red-500">{error}</p>}
 
-          <motion.button
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.98 }}
+          <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-xl font-semibold hover:bg-blue-700 transition-all flex items-center justify-center gap-2"
+            className="w-full rounded-xl bg-gradient-to-r from-emerald-500 via-teal-500 to-sky-500 px-4 py-3 text-sm font-semibold text-white shadow-[0_18px_40px_-15px_rgba(14,165,233,0.6)] transition hover:shadow-[0_18px_52px_-12px_rgba(14,165,233,0.55)]"
           >
-            <FaUserPlus /> Crear cuenta
-          </motion.button>
+            Crear cuenta
+          </button>
         </form>
 
-        <p className="text-center text-gray-500 mt-6">
+        <p className="mt-8 text-center text-sm text-slate-500">
           ¿Ya tienes cuenta?{" "}
-          <Link
-            to="/login"
-            className="text-blue-600 font-semibold hover:underline"
-          >
+          <Link to="/login" className="font-semibold text-indigo-600 hover:underline">
             Inicia sesión
           </Link>
         </p>
-      </motion.div>
+      </AuthCard>
     </div>
   );
 }

@@ -1,26 +1,26 @@
-// src/components/AuthCard.jsx
 import React from "react";
 import { motion } from "framer-motion";
 
 export default function AuthCard({ children, title, subtitle }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30, scale: 0.98 }}
+      initial={{ opacity: 0, y: 26, scale: 0.995 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: -20 }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
-      className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-md mx-auto"
-      style={{ border: "1px solid rgba(15,76,129,0.06)" }}
+      exit={{ opacity: 0, y: -12 }}
+      transition={{ duration: 0.55, ease: "easeOut" }}
+      className="relative mx-auto w-full max-w-lg overflow-hidden rounded-3xl border border-white/60 bg-white/80 px-10 pb-12 pt-10 shadow-[0_35px_80px_-35px_rgba(15,23,42,0.45)] backdrop-blur-2xl"
     >
-      <div className="mb-6 text-center">
-        <div className="w-16 h-16 rounded-lg mx-auto flex items-center justify-center bg-gradient-to-br from-corporate-900 to-corporate-700 text-white font-bold text-lg">
-          CR
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(59,130,246,0.18),_transparent_60%)]" />
+      <div className="pointer-events-none absolute -left-6 top-24 h-32 w-32 rounded-full bg-indigo-200/60 blur-3xl" />
+      <div className="pointer-events-none absolute -right-2 -top-8 h-36 w-36 rounded-full bg-sky-200/60 blur-3xl" />
+      <div className="relative mb-8 text-center">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-600 via-blue-500 to-cyan-400 text-lg font-bold text-white shadow-[0_18px_40px_-15px_rgba(37,99,235,0.55)]">
+          SC
         </div>
-        <h2 className="text-2xl font-semibold text-neutral-900 mt-4">{title}</h2>
-        {subtitle && <p className="text-sm text-neutral-500 mt-1">{subtitle}</p>}
+        <h2 className="mt-6 text-3xl font-semibold tracking-tight text-slate-900">{title}</h2>
+        {subtitle && <p className="mt-2 text-sm text-slate-500">{subtitle}</p>}
       </div>
-
-      <div>{children}</div>
+      <div className="relative">{children}</div>
     </motion.div>
   );
 }

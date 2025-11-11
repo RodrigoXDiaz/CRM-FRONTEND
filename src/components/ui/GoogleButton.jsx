@@ -2,16 +2,16 @@ import React from "react";
 import { motion } from "framer-motion";
 import { FcGoogle } from "react-icons/fc";
 
-export default function GoogleButton({ onClick }) {
+export default function GoogleButton({ text = "Entrar con Google", onClick }) {
   return (
     <motion.button
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
       onClick={onClick}
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
-      className="flex items-center justify-center gap-2 bg-white text-gray-700 font-semibold py-2 w-full rounded-lg shadow hover:bg-gray-200 transition"
+      className="w-full flex items-center justify-center gap-3 border border-gray-200 rounded-xl py-2.5 bg-white shadow-sm hover:shadow-md transition-all"
     >
       <FcGoogle size={22} />
-      Iniciar sesión con Google
+      <span className="text-neutral-700 font-medium">{text}</span>
     </motion.button>
   );
 }

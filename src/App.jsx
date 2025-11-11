@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { AuthProvider, AuthContext } from "./context/AuthContext";
 
 import Layout from "./components/layout/Layout";
+import FloatingChat from "./components/support/FloatingChat";
 import Dashboard from "./pages/Dashboard";
 import Users from "./pages/Users";
 import Reports from "./pages/Reports";
@@ -15,9 +16,9 @@ import Register from "./pages/Register";
 
 function PageWrapper({ children }) {
   const variants = {
-    initial: { opacity: 0, y: 25 },
-    animate: { opacity: 1, y: 0 },
-    exit: { opacity: 0, y: -25 },
+    initial: { opacity: 0, y: 18, scale: 0.99 },
+    animate: { opacity: 1, y: 0, scale: 1 },
+    exit: { opacity: 0, y: -12, scale: 0.995 },
   };
   return (
     <motion.div
@@ -25,7 +26,7 @@ function PageWrapper({ children }) {
       initial="initial"
       animate="animate"
       exit="exit"
-      transition={{ duration: 0.4, ease: "easeOut" }}
+      transition={{ duration: 0.45, ease: "circOut" }}
       className="h-full w-full"
     >
       {children}
@@ -44,6 +45,7 @@ export default function App() {
 
   return (
     <AuthProvider>
+      <FloatingChat />
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
 
