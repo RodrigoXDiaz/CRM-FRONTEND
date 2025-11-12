@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
-  Users,
+  Users as UsersIcon,
   BarChart3,
   Settings,
   LogOut,
@@ -12,10 +12,11 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { AuthContext } from "../../context/AuthContext";
+import logo from "../../assets/speed-logo.jpg";
 
 const menuItems = [
   { name: "Dashboard", icon: LayoutDashboard, path: "/" },
-  { name: "Usuarios", icon: Users, path: "/users" },
+  { name: "Usuarios", icon: UsersIcon, path: "/users" },
   { name: "Reportes", icon: BarChart3, path: "/reports" },
   { name: "Configuración", icon: Settings, path: "/settings" },
 ];
@@ -39,8 +40,8 @@ export default function Sidebar({ collapsed, onToggle }) {
       <div className="flex h-full w-full flex-col">
         <div className="relative flex items-center justify-between px-5 pb-8 pt-7">
           <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 via-blue-500 to-sky-400 text-base font-semibold text-white shadow-[0_16px_30px_-15px_rgba(59,130,246,0.75)]">
-              SC
+            <div className="flex h-[52px] w-[52px] items-center justify-center overflow-hidden rounded-2xl border border-white/20 bg-white/80 shadow-[0_16px_34px_-18px_rgba(59,130,246,0.45)]">
+              <img src={logo} alt="Speed CRM" className="h-full w-full object-contain" />
             </div>
             <AnimatePresence initial={false}>
               {!collapsed && (

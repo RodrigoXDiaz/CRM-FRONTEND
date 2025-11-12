@@ -1,5 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
+import logo from "../assets/speed-logo.jpg";
 
 export default function AuthCard({ children, title, subtitle }) {
   return (
@@ -14,8 +15,8 @@ export default function AuthCard({ children, title, subtitle }) {
       <div className="pointer-events-none absolute -left-6 top-24 h-32 w-32 rounded-full bg-indigo-200/60 blur-3xl" />
       <div className="pointer-events-none absolute -right-2 -top-8 h-36 w-36 rounded-full bg-sky-200/60 blur-3xl" />
       <div className="relative mb-8 text-center">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-600 via-blue-500 to-cyan-400 text-lg font-bold text-white shadow-[0_18px_40px_-15px_rgba(37,99,235,0.55)]">
-          SC
+        <div className="mx-auto flex h-20 w-20 items-center justify-center overflow-hidden rounded-3xl border border-white/50 bg-white/70 shadow-[0_18px_40px_-18px_rgba(37,99,235,0.4)]">
+          <img src={logo} alt="Speed CRM" className="h-full w-full object-contain" />
         </div>
         <h2 className="mt-6 text-3xl font-semibold tracking-tight text-slate-900">{title}</h2>
         {subtitle && <p className="mt-2 text-sm text-slate-500">{subtitle}</p>}

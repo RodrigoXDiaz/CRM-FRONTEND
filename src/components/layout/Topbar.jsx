@@ -1,5 +1,6 @@
 import React from "react";
 import { Bell, Menu, Search, UserCircle } from "lucide-react";
+import logo from "../../assets/speed-logo.jpg";
 
 export default function Topbar({ onToggleSidebar }) {
   return (
@@ -12,9 +13,14 @@ export default function Topbar({ onToggleSidebar }) {
         >
           <Menu size={20} />
         </button>
-        <div>
-          <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Panel principal</p>
-          <h2 className="mt-1 text-2xl font-semibold text-slate-900">Bienvenido de vuelta</h2>
+        <div className="flex items-center gap-3">
+          <div className="hidden h-12 w-12 items-center justify-center overflow-hidden rounded-full border border-white/30 bg-white/90 p-1.5 shadow-[0_16px_38px_-22px_rgba(15,23,42,0.65)] sm:flex">
+            <img src={logo} alt="Speed CRM" className="h-full w-full rounded-full object-cover" />
+          </div>
+          <div>
+            <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Panel principal</p>
+            <h2 className="mt-1 text-2xl font-semibold text-slate-900">Bienvenido de vuelta</h2>
+          </div>
         </div>
       </div>
 
